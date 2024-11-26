@@ -37,7 +37,6 @@ function Dashboard() {
                 if (result) handleScan(result);
                 if (error) handleError(error);
               }}
-              constraints={{ facingMode: "environment" }}
               style={{ width: "100%" }}
             />
           </div>

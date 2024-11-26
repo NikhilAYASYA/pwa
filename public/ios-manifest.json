@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "QR Reader",
+  "name": "QR Reader PWA",
   "icons": [
     {
       "src": "./images/icons-64.png",
@@ -19,7 +19,7 @@
     }
   ],
   "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
+  "display": "minimal-ui",
+  "theme_color": "#282c34",
   "background_color": "#ffffff"
 }
