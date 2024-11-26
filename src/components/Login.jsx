@@ -39,7 +39,12 @@ const Login = ({ setIsAuthenticated }) => {
       // Mock API call
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API delay
       setIsAuthenticated(true);
-      navigate("/dashboard");
+      navigate("/dashboard", {
+        state: {
+          username: formData.username,
+          gateNo: formData.gateNo,
+        },
+      });
     } catch (error) {
       alert("Login failed.");
     } finally {

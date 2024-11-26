@@ -1,14 +1,23 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { QrReader } from "react-qr-reader";
+import { useNavigate, useLocation } from "react-router-dom";
+import QrReader from "react-qr-reader";
 
 function Dashboard() {
   const [data, setData] = useState("No result");
   const [showScanner, setShowScanner] = useState(false);
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const { username, gateNo } = location.state;
   const handleScan = (result) => {
+    console.log(result, "call");
     if (result) {
+      navigate("/detail", {
+        state: {
+          qrData: result,
+          username: username,
+          gateNo: gateNo,
+        },
+      });
       setData(result.text);
       setShowScanner(false);
     }
@@ -33,10 +42,10 @@ function Dashboard() {
         {showScanner && (
           <div className="mt-4">
             <QrReader
-              onResult={(result, error) => {
-                if (result) handleScan(result);
-                if (error) handleError(error);
-              }}
+              className="qr-reader"
+              delay={300}
+              onError={handleError}
+              onScan={handleScan}
               style={{ width: "100%" }}
             />
           </div>

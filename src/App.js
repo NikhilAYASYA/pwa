@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginScreen from "./components/Login";
 import Dashboard from "./components/Dashboard";
+import DetailPage from "./components/DetailPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
@@ -19,6 +20,14 @@ const App = () => {
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/detail"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <DetailPage />
             </ProtectedRoute>
           }
         />
