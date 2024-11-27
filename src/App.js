@@ -1,25 +1,26 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginScreen from "./components/Login";
-import Dashboard from "./components/Dashboard";
+import QrScanner from "./components/QrScanner";
 import DetailPage from "./components/DetailPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import { Toaster } from "react-hot-toast";
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
     <Router>
+      <Toaster position="top-right" reverseOrder={false} />
       <Routes>
         <Route
           path="/login"
           element={<LoginScreen setIsAuthenticated={setIsAuthenticated} />}
         />
         <Route
-          path="/dashboard"
+          path="/qrscanner"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Dashboard />
+              <QrScanner />
             </ProtectedRoute>
           }
         />

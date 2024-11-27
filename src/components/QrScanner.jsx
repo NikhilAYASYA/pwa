@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import QrReader from "react-qr-reader";
+import toast from "react-hot-toast";
 
-function Dashboard() {
+function QrScanner() {
   const [data, setData] = useState("No result");
   const [showScanner, setShowScanner] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { username, gateNo } = location.state;
+  const { user_id, gate_no } = location.state;
   const handleScan = (result) => {
-    console.log(result, "call");
     if (result) {
       navigate("/detail", {
         state: {
           qrData: result,
-          username: username,
-          gateNo: gateNo,
+          user_id: user_id,
+          gate_no: gate_no,
         },
       });
       setData(result.text);
@@ -24,14 +24,15 @@ function Dashboard() {
   };
 
   const handleError = (error) => {
-    console.error(error);
+    toast.error("Error in Scan QR Code", error);
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md text-center">
-        <h1 className="text-2xl font-semibold text-gray-700 mb-4">Dashboard</h1>
-
+        <h1 className="text-2xl font-semibold text-gray-700 mb-4">
+          QR Scanner
+        </h1>
         <button
           onClick={() => setShowScanner(true)}
           className="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300"
@@ -66,4 +67,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default QrScanner;

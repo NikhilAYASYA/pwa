@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { fetchlogin } from "../services/login.service";
 
 const Login = ({ setIsAuthenticated }) => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    gateNo: "",
+    gate_no: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -13,14 +15,14 @@ const Login = ({ setIsAuthenticated }) => {
 
   const navigate = useNavigate();
 
-  const gateOptions = ["Gate 1", "Gate 2", "Gate 3", "Gate 4"];
+  const gateOptions = [1, 2, 3, 4];
 
   const validate = () => {
     const newErrors = {};
 
     if (!formData.username.trim()) newErrors.username = "Username is required.";
     if (!formData.password.trim()) newErrors.password = "Password is required.";
-    if (!formData.gateNo) newErrors.gateNo = "Please select a gate.";
+    if (!formData.gate_no) newErrors.gate_no = "Please select a gate.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -36,22 +38,27 @@ const Login = ({ setIsAuthenticated }) => {
     if (!validate()) return;
     setIsSubmitting(true);
     try {
-      // Mock API call
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API delay
-      setIsAuthenticated(true);
-      navigate("/dashboard", {
-        state: {
-          username: formData.username,
-          gateNo: formData.gateNo,
-        },
-      });
+      const response = await fetchlogin(formData);
+      if (response.message) {
+        setIsAuthenticated(true);
+        console.log(response);
+        toast.success(response.message);
+        navigate("/qrscanner", {
+          state: {
+            user_id: response.user_id,
+            gate_no: response.gate_no,
+          },
+        });
+      }
+      if (response.error) {
+        toast.error(response.error);
+      }
     } catch (error) {
-      alert("Login failed.");
+      toast.error("Login Failed!!");
     } finally {
       setIsSubmitting(false);
     }
   };
-
 
   return (
     <div className="min-h-screen flex items-center justify-center max-md:px-4 bg-gray-100">
@@ -92,8 +99,8 @@ const Login = ({ setIsAuthenticated }) => {
           <div>
             <label className="block text-gray-700">Gate Number</label>
             <select
-              name="gateNo"
-              value={formData.gateNo}
+              name="gate_no"
+              value={formData.gate_no}
               onChange={handleChange}
               className="w-full mt-2 p-2 border border-gray-300 rounded"
             >

@@ -1,40 +1,56 @@
 import React, { useState, useEffect } from "react";
 import { sendQrCodeToBackend } from "../services/sendQrcode.Service";
-import { useLocation , useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
 const DetailPage = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
-  const { qrData, username, gateNo } = location.state || {};
-  console.log(qrData, username, gateNo, "gate number---");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { qrData, user_id, gate_no } = location.state || {};
+
   useEffect(() => {
-    console.log(qrData, "inside useEffect-----");
     if (!qrData) {
       setStatusMessage("No QR code data found.");
     }
   }, [qrData]);
 
   const [statusMessage, setStatusMessage] = useState("");
+  const parts = qrData
+    .split(/Name: | Ticket: | Email:| Phone:/)
+    .filter(Boolean);
+
+  // Extracting values from the array
+  const name = parts[0].trim();
+  const tickets = parts[1].trim();
+  const email = parts[2].trim();
+  const phone_no = parts[3].trim();
 
   const handleConfirm = async () => {
     if (!qrData) {
       setStatusMessage("No QR code data to confirm.");
       return;
     }
-
     const dataToSend = {
-      qrData,
-      username,
-      gateNo,
+      name,
+      email,
+      phone_no,
+      tickets,
+      user_id,
+      gate_no,
     };
-
     try {
-      // Send the data to the backend
       const response = await sendQrCodeToBackend(dataToSend);
-      setStatusMessage(
-        `Success: ${response.message || "Details confirmed successfully!"}`
-      );
+      if (response.message) {
+        toast.success("Details confirmed successfully!");
+        setStatusMessage(
+          `Success: ${response.message || "Details confirmed successfully!"}`
+        );
+      }
+      if (response.error) {
+        toast.error("Detials are already Exist!!");
+      }
     } catch (error) {
-      console.error("Error confirming QR code details:", error);
+      toast.error("An error occurred while confirming details");
       setStatusMessage(
         `Failure: ${
           error.message || "An error occurred while confirming details."
@@ -43,14 +59,15 @@ const DetailPage = () => {
     }
   };
 
-    const handleNavigate = () => {
-        navigate("/dashboard", {
-          state: {
-            username: username,
-            gateNo: gateNo,
-          },
-        });
-    }
+  const handleNavigate = () => {
+    navigate("/qrscanner", {
+      state: {
+        user_id: user_id,
+        gate_no: gate_no,
+      },
+    });
+  };
+
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
       <h2 className="font-semibold text-3xl">QR Code Details</h2>
@@ -58,13 +75,14 @@ const DetailPage = () => {
         <div className="flex justify-center items-center flex-col ">
           <div className="flex mt-5 flex-col items-center gap-5">
             <p>
-              <strong>Scanned Data:</strong> {qrData}
+              <strong>Scanned Data:</strong>{" "}
+              {`Name: ${name}, Ticket: ${tickets}`}
             </p>
             <p>
-              <strong>Username:</strong> {username || "N/A"}
+              <strong>User id:</strong> {user_id || "N/A"}
             </p>
             <p>
-              <strong>Gate No:</strong> {gateNo || "N/A"}
+              <strong>Gate No:</strong> {gate_no || "N/A"}
             </p>
           </div>
           <button
