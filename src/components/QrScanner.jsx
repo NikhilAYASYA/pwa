@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import QrReader from "react-qr-reader";
 import toast from "react-hot-toast";
-import jwt from "jsonwebtoken";
 
 function QrScanner() {
   const [data, setData] = useState("No result");
@@ -12,11 +11,10 @@ function QrScanner() {
   const { user_id, gate_no } = location.state;
   const handleScan = (result) => {
     if (result) {
-      const qrData = jwt.verify(result, process.env.REACT_SECRET_KEY);
       navigate("/detail", {
         state: {
-          qrData: qrData,
-          user_id: user_id, 
+          qrData: result,
+          user_id: user_id,
           gate_no: gate_no,
         },
       });

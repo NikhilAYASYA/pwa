@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { sendQrCodeToBackend } from "../services/sendQrcode.Service";
+import QrError from "./QrError";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -15,6 +16,16 @@ const DetailPage = () => {
   }, [qrData]);
 
   const [statusMessage, setStatusMessage] = useState("");
+
+  if (
+    !qrData.includes("Name:") ||
+    !qrData.includes("Ticket:") ||
+    !qrData.includes("Email:") ||
+    !qrData.includes("Phone:")
+  ) {
+    return <QrError gate_no={gate_no} user_id={user_id} />;
+  }
+
   const parts = qrData
     .split(/Name: | Ticket: | Email:| Phone:/)
     .filter(Boolean);
@@ -102,7 +113,7 @@ const DetailPage = () => {
           )}
         </div>
       ) : (
-        <p>No QR code data available.</p>
+        <QrError gate_no={gate_no} user_id={user_id} />
       )}
     </div>
   );
